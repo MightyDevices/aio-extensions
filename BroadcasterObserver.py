@@ -33,7 +33,7 @@ class Broadcaster:
     # close the broadcasting channel
     def close(self, exc=None):
         # notify all observers of closure
-        for observer in self._observers
+        for observer in self._observers:
             observer.close(exc)
 
 # observer class based on the concept of closable-queue
