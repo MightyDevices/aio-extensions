@@ -3,11 +3,15 @@ import asyncio as aio
 
 from .WaitCancelOthers import *
 
-# queue closed
+# queue closed exception
 class ClosableQueueClosed(Exception):
     pass
 
-# queue with option for closing
+# queue with option for closing. perfect for representing data channels. use 
+# close method to mark the channel as closed. After 'closing' putting data will 
+# raise an ClosableQueueClosed exception, BUT you can still get data from the 
+# queue as long as it's there. The next call to 'get' after the queue has been 
+# emptied will raise ClosableQueueClosed exception.
 class ClosableQueue(aio.Queue):
     # constructor
     def __init__(self, *args, **kwargs):

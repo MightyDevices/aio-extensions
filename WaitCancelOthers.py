@@ -1,7 +1,9 @@
 import asyncio as aio
 import contextlib
 
-# wait for tasks to end and cancel those that are still pending
+# this is a wrapper over the asyncio.wait that will cancel all tasks that are 
+# running after the 'await aio.wait' completes. Tasks that were cancelled will 
+# be returned in the 'pending' list (not 'done' list)
 async def wait_cancel_others(fs, *args, **kwargs):
     # this may throw exceptions when cancelled
     try:

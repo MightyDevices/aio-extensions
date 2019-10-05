@@ -3,11 +3,13 @@ import asyncio as aio
 # this is based on the concept of the closeable queue
 from .ClosableQueue import *
 
-# broadcaster channel is closed
+# broadcaster channel is closed exception
 class BroadcasterClosed(Exception):
     pass
 
-# broadcaster class
+# broadcaster class. incorporate this to classes that produce events to which 
+# others can subscribe. Use Broadcaseter.close() to notify the observers that 
+# event broadcasting will no longer take place.
 class Broadcaster:
     # constructor
     def __init__(self):
@@ -34,9 +36,12 @@ class Broadcaster:
         for observer in self._observers
             observer.close(exc)
 
-# observer class
+# observer class based on the concept of closable-queue
 class Observer(ClosableQueue):
-    # constructor
+    # constructor that subscribes to the given 'broadcaster' and accepts the 
+    # events that have a name present in 'events'. 'events' can be None, meaing 
+    # that any event shall be accepted OR a string meaning that only events with 
+    # name equal to that string will be observed OR a list of strings.
     def __init__(self, broadcaster:Broadcaster, events=None):
         # store acceptable events
         self._events = events
@@ -54,8 +59,8 @@ class Observer(ClosableQueue):
         # unregister from the broadcasting channel
         self._broadcaster.unregister(self)
     
-    # put data to the queue
-    async def _put(self, event, data):
+    # put data to the queue (used by the broadcaster)
+    async def put(self, event, data):
         # filter out unwanted events
         if self._events is None or event is self._events or \
             event in self._events:
