@@ -36,7 +36,7 @@ class ClosableQueue(aio.Queue):
     # get value without waiting
     def get_nowait(self):
         # queue empty and closed?
-        if self.qsize() == 0 and self._closed_ev.is_set():
+        if super().qsize() == 0 and self._closed_ev.is_set():
             raise self._exc
         # use the underlying implementation
         return super().get_nowait()
@@ -44,7 +44,7 @@ class ClosableQueue(aio.Queue):
     # get value from queue, values can be fetched even when the queue is closed
     async def get(self):
         # got elements in the queue, then there is no need to wait.
-        if self.qsize() > 0:
+        if super().qsize() > 0:
             return super().get_nowait()
         # queue closed
         elif self._closed_ev.is_set():
