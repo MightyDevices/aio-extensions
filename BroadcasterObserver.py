@@ -1,3 +1,4 @@
+import inspect
 import asyncio as aio
 
 # this is based on the concept of the closeable queue
@@ -88,7 +89,7 @@ class Observer:
             # shorthand
             args, kwargs = self._callback_args, self._callback_kwargs
             # got callback function that is a coroutine?
-            if aio.iscoroutine(self._callback):
+            if inspect.iscoroutinefunction(self._callback):
                 await self._callback(self, *args, **kwargs)
             # synchronous callback?
             elif callable(self._callback):
